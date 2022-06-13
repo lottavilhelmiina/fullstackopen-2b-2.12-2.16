@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import axios from 'axios';
 
 const FilterBar = ({ filter, handleFilterChange }) => {
-
   return (
     <form>
       <div>
@@ -13,7 +12,7 @@ const FilterBar = ({ filter, handleFilterChange }) => {
   )
 }
  
-const FilterList = ({ filter, countries }) => {
+const FilterList = ({ filter, countries, handleButtonClick }) => {
   const result = countries
   .filter(country => country.name.common.toLowerCase().includes(filter.toLowerCase()))
   
@@ -26,16 +25,20 @@ const FilterList = ({ filter, countries }) => {
   if (result.length < 11 && result.length > 1) {
     return (
       result.map((country, index) =>
-          <p id={index}>
+      <>
+          <span id={index}>
             {country.name.common}
-          </p>
+          </span>
+          <button id={index} onClick={handleButtonClick}>View</button>
+          <br/>
+          </>
     )
       )
 
   }
 
     else {
-      // en saa rivin 52 languages-listan mappausta toimimaan millään, koska
+      // en saa languages-listan mappausta toimimaan millään, koska
       // se valittaa, ettei country.languages.map ole funktio
       return (
         result.map((country, index) =>
@@ -50,13 +53,8 @@ const FilterList = ({ filter, countries }) => {
           {country.area}
         </p>
         <h4>Languages</h4>
-        {country.languages.map((language, index) => {
-                return (
-                    <span key={index}>{language.name}</span>
-                );
-              })}
-        <img src={country.flags.svg} alt={"Flag of " + country.name.common} width="150"/>
 
+        <img src={country.flags.svg} alt={"Flag of " + country.name.common} width="150"/>
 
         </div>
       ))
@@ -82,17 +80,20 @@ function App() {
     console.log(event.target.value);
     setFilter(event.target.value);
   }
-
-  // miten saan tän toimiin silleen että saan listalta talteen valtion nimen?
-  //nyt promise ei edes mee perille jostain syystä tän login takia (jos laittaa vaan countries, niin menee perille)
+// sain oikeen indeksin talteen tätä varten, mutta en osaa saada
+// listaa näkyviin tässä funktiossa, yritin countries, result ja country
+  const handleButtonClick = (event, countries) => {
+    const copyList = [...countries];
+    const resultIndex = event.target.id;
+    console.log(countries);
+  };
 
   return (
     <div className="App">
       <FilterBar filter={filter} handleFilterChange={handleFilterChange} />
-      <FilterList filter={filter} countries={countries}/>
+      <FilterList filter={filter} countries={countries} handleButtonClick={handleButtonClick}/>
     </div>
   );
 }
 
 export default App;
-//       <FilterList filter={filter} countries={countries}/>
