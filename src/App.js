@@ -14,15 +14,53 @@ const FilterBar = ({ filter, handleFilterChange }) => {
 }
  
 const FilterList = ({ filter, countries }) => {
-  return countries
-    .filter((country) =>
-      country.name.toLowerCase().includes(filter.toLowerCase())
+  const result = countries
+  .filter(country => country.name.common.toLowerCase().includes(filter.toLowerCase()))
+  
+  if (result.length > 10) {
+    return (
+      <p>Too many countries, specify another character.</p>
     )
-    .map((filteredCountry) =>
-        <p>
-          {filteredCountry.name}
-        </p>
+  }
+
+  if (result.length < 11 && result.length > 1) {
+    return (
+      result.map((country, index) =>
+          <p id={index}>
+            {country.name.common}
+          </p>
+    )
       )
+
+  }
+
+    else {
+      // en saa rivin 52 languages-listan mappausta toimimaan millään, koska
+      // se valittaa, ettei country.languages.map ole funktio
+      return (
+        result.map((country, index) =>
+        <div>
+        <h2 id={index}>
+          {country.name.common}
+        </h2>
+        <p id={index}>
+          {country.capital}
+        </p>
+        <p id={index}>
+          {country.area}
+        </p>
+        <h4>Languages</h4>
+        {country.languages.map((language, index) => {
+                return (
+                    <span key={index}>{language.name}</span>
+                );
+              })}
+        <img src={country.flags.svg} alt={"Flag of " + country.name.common} width="150"/>
+
+
+        </div>
+      ))
+    }
 }
 
 function App() {
@@ -47,13 +85,14 @@ function App() {
 
   // miten saan tän toimiin silleen että saan listalta talteen valtion nimen?
   //nyt promise ei edes mee perille jostain syystä tän login takia (jos laittaa vaan countries, niin menee perille)
-  console.log(countries.name.common);
+
   return (
     <div className="App">
-
       <FilterBar filter={filter} handleFilterChange={handleFilterChange} />
+      <FilterList filter={filter} countries={countries}/>
     </div>
   );
 }
 
 export default App;
+//       <FilterList filter={filter} countries={countries}/>
